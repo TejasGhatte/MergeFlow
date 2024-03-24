@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 try {
-    mongoose.connect('mongodb+srv://admin:ohTALWhy9vwnI7av@cluster0.okyiuau.mongodb.net/mailerDB');
+    mongoose.connect('DATABASE_URL');
 } catch (error) {
     console.log(error)
 }
