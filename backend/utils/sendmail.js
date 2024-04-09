@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-
-const CLIENT_ID = '';
-const CLIENT_SECRET = '';
-const REDIRECT_URI = '';
+const {web} = require("../creds-gmail.json")
+const CLIENT_ID = web.client_id;
+const CLIENT_SECRET = web.client_secret;
+const REDIRECT_URI = web.redirect_uris;
 const REFRESH_TOKEN= '';
 
 const oAuth2Client  = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -12,7 +12,7 @@ oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
 const SendMail = async (from_email,from_name, to_email, to_name, subject, text, html)=>{
     try {
         const accessToken = await oAuth2Client.getAccessToken();
-
+        
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {

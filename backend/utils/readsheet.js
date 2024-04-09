@@ -1,8 +1,9 @@
 const { google } = require('googleapis');
+const {web} = require("../creds-sheet.json")
 
-const CLIENT_ID = '';
-const CLIENT_SECRET = '';
-const REDIRECT_URI = '';
+const CLIENT_ID = web.client_id;
+const CLIENT_SECRET = web.client_secret;
+const REDIRECT_URI = web.redirect_uris;
 const REFRESH_TOKEN= '';
 
 //Returns an array of cells in Sheet

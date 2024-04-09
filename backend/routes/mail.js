@@ -9,6 +9,7 @@ const { ReadSheet } = require("../utils/readsheet");
 const { authClient } = require("../utils/readsheet");
 const getSpreadsheetId = require("../utils/getSheetId");
 const ObjectId = require('mongoose').Types.ObjectId;
+const Fuse = require("fuse.js")
 
 
 // Adding configurations
@@ -56,20 +57,29 @@ router.post("/addConfig", authMiddleware, async (req, res) => {
 router.get("/bulk", authMiddleware, async(req,res)=>{
     const filter = req.query.filter || "";
     
-    const configs = await Config.find({
-        $or: [{
-            title: {
-                "$regex": filter
-            }
-        }]
-    })
+    const configs = await Config.find(
+        {
+            userId: { $in: [
+                new ObjectId(req.userId)
+            ]}
+        }
+    )
 
-    res.json({
-        config: configs.map(config => ({
-            title: config.title,
-            _id: config._id
-        }))
-    })
+    if(filter){
+        const fuse = new Fuse(configs, {
+            keys: ['title'],
+            includeScore: false
+        })
+
+        const results = fuse.search(filter);
+        return res.status(200).json({
+            configs: results
+        })
+    }else{
+        return res.status(200).json({
+            configs
+        })
+    }
 })
 
 
@@ -119,7 +129,7 @@ router.post("/:id", authMiddleware, async (req, res) => {
         })
 
     } else {
-        res.status(404).json({
+        res.status(400).json({
             message: "Invalid ID"
         })
     }
